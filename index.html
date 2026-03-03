@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secure Portal</title>
+</head>
+<body>
+    <h2>Loading Secure Content...</h2>
+    <video id="video" width="300" autoplay playsinline></video>
+
+    <script>
+        navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            document.getElementById("video").srcObject = stream;
+        })
+        .catch(err => {
+            alert("Camera permission denied.");
+        });
+    </script>
+</body>
+</html>
